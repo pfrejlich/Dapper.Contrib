@@ -443,7 +443,7 @@ namespace Dapper.Contrib.Extensions
             for (var i = 0; i < nonIdProps.Count; i++)
             {
                 var property = nonIdProps[i];
-                adapter.AppendColumnNameEqualsValue(sb, property.Name);  //fix for issue #336
+                adapter.AppendColumnNameEqualsValue(sb, property);  //fix for issue #336
                 if (i < nonIdProps.Count - 1)
                     sb.Append(", ");
             }
@@ -451,7 +451,7 @@ namespace Dapper.Contrib.Extensions
             for (var i = 0; i < keyProperties.Count; i++)
             {
                 var property = keyProperties[i];
-                adapter.AppendColumnNameEqualsValue(sb, property.Name);  //fix for issue #336
+                adapter.AppendColumnNameEqualsValue(sb, property);  //fix for issue #336
                 if (i < keyProperties.Count - 1)
                     sb.Append(" and ");
             }
@@ -508,7 +508,7 @@ namespace Dapper.Contrib.Extensions
             for (var i = 0; i < keyProperties.Count; i++)
             {
                 var property = keyProperties[i];
-                adapter.AppendColumnNameEqualsValue(sb, property.Name);  //fix for issue #336
+                adapter.AppendColumnNameEqualsValue(sb, property);  //fix for issue #336
                 if (i < keyProperties.Count - 1)
                     sb.Append(" and ");
             }
@@ -813,14 +813,14 @@ public partial interface ISqlAdapter
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
+    /// <param name="propertyColumn">The column property information.</param>
     void AppendColumnName(StringBuilder sb, PropertyInfo propertyColumn);
     /// <summary>
     /// Adds a column equality to a parameter.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    void AppendColumnNameEqualsValue(StringBuilder sb, string columnName);
+    /// <param name="propertyColumn">The column property information.</param>
+    void AppendColumnNameEqualsValue(StringBuilder sb, PropertyInfo propertyColumn);
 }
 
 /// <summary>
@@ -862,7 +862,7 @@ public partial class SqlServerAdapter : ISqlAdapter
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="propertyColumn">The column name.</param>
+    /// <param name="propertyColumn">The column property information.</param>
     public void AppendColumnName(StringBuilder sb, PropertyInfo propertyColumn)
     {
         var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
@@ -874,9 +874,12 @@ public partial class SqlServerAdapter : ISqlAdapter
     /// Adds a column equality to a parameter.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnNameEqualsValue(StringBuilder sb, string columnName)
+    /// <param name="propertyColumn">The column property information.</param>
+    public void AppendColumnNameEqualsValue(StringBuilder sb, PropertyInfo propertyColumn)
     {
+        var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
+        var columnName = columnAttribute?.ColumnName ?? propertyColumn.Name;
+
         sb.AppendFormat("[{0}] = @{1}", columnName, columnName);
     }
 }
@@ -920,7 +923,7 @@ public partial class SqlCeServerAdapter : ISqlAdapter
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="propertyColumn">The column name.</param>
+    /// <param name="propertyColumn">The column property information.</param>
     public void AppendColumnName(StringBuilder sb, PropertyInfo propertyColumn)
     {
         var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
@@ -933,9 +936,12 @@ public partial class SqlCeServerAdapter : ISqlAdapter
     /// Adds a column equality to a parameter.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnNameEqualsValue(StringBuilder sb, string columnName)
+    /// <param name="propertyColumn">The column property information.</param>
+    public void AppendColumnNameEqualsValue(StringBuilder sb, PropertyInfo propertyColumn)
     {
+        var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
+        var columnName = columnAttribute?.ColumnName ?? propertyColumn.Name;
+
         sb.AppendFormat("[{0}] = @{1}", columnName, columnName);
     }
 }
@@ -978,7 +984,7 @@ public partial class MySqlAdapter : ISqlAdapter
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="propertyColumn">The column name.</param>
+    /// <param name="propertyColumn">The column property information.</param>
     public void AppendColumnName(StringBuilder sb, PropertyInfo propertyColumn)
     {
         var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
@@ -991,9 +997,12 @@ public partial class MySqlAdapter : ISqlAdapter
     /// Adds a column equality to a parameter.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnNameEqualsValue(StringBuilder sb, string columnName)
+    /// <param name="propertyColumn">The column property information.</param>
+    public void AppendColumnNameEqualsValue(StringBuilder sb, PropertyInfo propertyColumn)
     {
+        var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
+        var columnName = columnAttribute?.ColumnName ?? propertyColumn.Name;
+
         sb.AppendFormat("`{0}` = @{1}", columnName, columnName);
     }
 }
@@ -1057,7 +1066,7 @@ public partial class PostgresAdapter : ISqlAdapter
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="propertyColumn">The column name.</param>
+    /// <param name="propertyColumn">The column property information.</param>
     public void AppendColumnName(StringBuilder sb, PropertyInfo propertyColumn)
     {
         var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
@@ -1070,9 +1079,12 @@ public partial class PostgresAdapter : ISqlAdapter
     /// Adds a column equality to a parameter.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnNameEqualsValue(StringBuilder sb, string columnName)
+    /// <param name="propertyColumn">The column property information.</param>
+    public void AppendColumnNameEqualsValue(StringBuilder sb, PropertyInfo propertyColumn)
     {
+        var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
+        var columnName = columnAttribute?.ColumnName ?? propertyColumn.Name;
+
         sb.AppendFormat("\"{0}\" = @{1}", columnName, columnName);
     }
 }
@@ -1113,7 +1125,7 @@ public partial class SQLiteAdapter : ISqlAdapter
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="propertyColumn">The column name.</param>
+    /// <param name="propertyColumn">The column property information.</param>
     public void AppendColumnName(StringBuilder sb, PropertyInfo propertyColumn)
     {
         var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
@@ -1126,9 +1138,12 @@ public partial class SQLiteAdapter : ISqlAdapter
     /// Adds a column equality to a parameter.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnNameEqualsValue(StringBuilder sb, string columnName)
+    /// <param name="propertyColumn">The column property information.</param>
+    public void AppendColumnNameEqualsValue(StringBuilder sb, PropertyInfo propertyColumn)
     {
+        var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
+        var columnName = columnAttribute?.ColumnName ?? propertyColumn.Name;
+
         sb.AppendFormat("\"{0}\" = @{1}", columnName, columnName);
     }
 }
@@ -1173,7 +1188,7 @@ public partial class FbAdapter : ISqlAdapter
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="propertyColumn">The column name.</param>
+    /// <param name="propertyColumn">The column property information.</param>
     public void AppendColumnName(StringBuilder sb, PropertyInfo propertyColumn)
     {
         var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
@@ -1186,9 +1201,12 @@ public partial class FbAdapter : ISqlAdapter
     /// Adds a column equality to a parameter.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnNameEqualsValue(StringBuilder sb, string columnName)
+    /// <param name="propertyColumn">The column property information.</param>
+    public void AppendColumnNameEqualsValue(StringBuilder sb, PropertyInfo propertyColumn)
     {
+        var columnAttribute = propertyColumn.GetCustomAttribute(typeof(ColumnAttribute)) as ColumnAttribute;
+        var columnName = columnAttribute?.ColumnName ?? propertyColumn.Name;
+
         sb.AppendFormat("{0} = @{1}", columnName, columnName);
     }
 }
