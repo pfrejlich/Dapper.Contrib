@@ -64,6 +64,8 @@ namespace Dapper.Tests.Contrib
     public class Person
     {
         public int Id { get; set; }
+
+        [Column("CustomName")]
         public string Name { get; set; }
     }
 

@@ -4,7 +4,6 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using Xunit;
 using Xunit.Sdk;
 
 namespace Dapper.Tests.Contrib
@@ -37,7 +36,7 @@ namespace Dapper.Tests.Contrib
                 dropTable("Stuff");
                 connection.Execute("CREATE TABLE Stuff (TheId int IDENTITY(1,1) not null, Name nvarchar(100) not null, Created DateTime null);");
                 dropTable("People");
-                connection.Execute("CREATE TABLE People (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null);");
+                connection.Execute("CREATE TABLE People (Id int IDENTITY(1,1) not null, CustomName nvarchar(100) not null);");
                 dropTable("Users");
                 connection.Execute("CREATE TABLE Users (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, Age int not null);");
                 dropTable("Automobiles");
@@ -83,7 +82,7 @@ namespace Dapper.Tests.Contrib
                     dropTable("Stuff");
                     connection.Execute("CREATE TABLE Stuff (TheId int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null, Created DateTime null);");
                     dropTable("People");
-                    connection.Execute("CREATE TABLE People (Id int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null);");
+                    connection.Execute("CREATE TABLE People (Id int not null AUTO_INCREMENT PRIMARY KEY, CustomName nvarchar(100) not null);");
                     dropTable("Users");
                     connection.Execute("CREATE TABLE Users (Id int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null, Age int not null);");
                     dropTable("Automobiles");
@@ -128,7 +127,7 @@ namespace Dapper.Tests.Contrib
             {
                 connection.Open();
                 connection.Execute("CREATE TABLE Stuff (TheId integer primary key autoincrement not null, Name nvarchar(100) not null, Created DateTime null) ");
-                connection.Execute("CREATE TABLE People (Id integer primary key autoincrement not null, Name nvarchar(100) not null) ");
+                connection.Execute("CREATE TABLE People (Id integer primary key autoincrement not null, CustomName nvarchar(100) not null) ");
                 connection.Execute("CREATE TABLE Users (Id integer primary key autoincrement not null, Name nvarchar(100) not null, Age int not null) ");
                 connection.Execute("CREATE TABLE Automobiles (Id integer primary key autoincrement not null, Name nvarchar(100) not null) ");
                 connection.Execute("CREATE TABLE Results (Id integer primary key autoincrement not null, Name nvarchar(100) not null, [Order] int not null) ");
